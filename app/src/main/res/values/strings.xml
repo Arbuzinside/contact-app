@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Contacts App</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_contact_info">Contact Info</string>
+    <string name="JSONTest">[{\"id\":{\"$oid\":\"54647cdf636f6e47c8010000\"},\"name\":\"Testi\",\"address\":\"Testadderee\",\"surname\":\"Teteeoo\",\"email\":\"test@test.com\",\"phone\":\"3945345395\",\"birthday\":\"2014–11–13\",\"notes\":\"assistant\",\"url\":\"http://mccgroup24.ddns.net:8080/contacts/54647cdf636f6e47c8010000.json\"},{\"id\":{\"$oid\":\"54647cf4636f6e47c8020000\"},\"name\":\"\",\"address\":null,\"surname\":null,\"email\":\"heikki.kaikkonen@aalto.fi\",\"phone\":null,\"birthday\":null,\"notes\":null,\"url\":\"http://mccgroup24.ddns.net:8080/contacts/54647cf4636f6e47c8020000.json\"}]</string>
+
+</resources>
