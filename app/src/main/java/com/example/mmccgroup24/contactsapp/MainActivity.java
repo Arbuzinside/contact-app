@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,14 +18,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.mmccgroup24.contactsapp.models.User;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.Collections;
 
 
-public class MainActivity extends ActionBarActivity  {
+public class MainActivity extends ActionBarActivity {
 
-
+    private static final int CREATE_CONTACT_REQUEST = 1;
 
     public Synchronization sync = new Synchronization();
     ContactListAdapter adapter;
@@ -38,17 +43,16 @@ public class MainActivity extends ActionBarActivity  {
 
         //Create JSONObject (TODO--> Add here the code to fetch from the server instead of this!!!!)
 
-        if(Synchronization.isInternetAvailable(MainActivity.this)) {
+        if (Synchronization.isInternetAvailable(MainActivity.this)) {
             Toast.makeText(getBaseContext(), "Connected!", Toast.LENGTH_LONG).show();
         }
         String input = getString(R.string.JSONTest);
         JSONArray jObject = null;
         try {
-             jObject= new JSONArray(input);
+            jObject = new JSONArray(input);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         // Construct the data source from a JSONArray
         User.users = User.fromJson(jObject);
@@ -62,28 +66,80 @@ public class MainActivity extends ActionBarActivity  {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User user = ((ContactListAdapter)parent.getAdapter()).getItem(position);
+                User user = ((ContactListAdapter) parent.getAdapter()).getItem(position);
                 Intent intent = new Intent(parent.getContext(), ContactInfoActivity.class);
                 //Here maybe we could send it en JSON....
-                intent.putExtra("USER_NAME", user.name);
-                intent.putExtra("USER_SURNAME", user.surname);
-                intent.putExtra("USER_ADDRESS", user.address);
-                intent.putExtra("USER_EMAIL", user.email);
-                intent.putExtra("USER_PHONE", user.phone);
-                intent.putExtra("USER_BIRTH", user.birthday);
-                intent.putExtra("USER_NOTES", user.notes);
+                intent.putExtra("contact", user);
                 startActivity(intent);
             }
         });
     }
 
-    private class ContactListAdapter extends ArrayAdapter<User>{
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-        // View lookup cache
-        private class ViewHolder {
-            TextView name;
-            TextView surname;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_add_local) {
+            Intent intent = new Intent(this, SearchLocalUserActivity.class);
+            startActivityForResult(intent, CREATE_CONTACT_REQUEST);
+            return true;
         }
+
+        if (id == R.id.action_create_contact) {
+            Intent intent = new Intent(this, CreateContactActivity.class);
+            startActivityForResult(intent, CREATE_CONTACT_REQUEST);
+        }
+        if (id == R.id.action_sync_online) try {
+
+            new LoginAsyncTask().execute("http://mccgroup24.ddns.net:8080//users/sign_in");
+            new HttpAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts");
+
+        } catch (Exception e) {
+            Log.e("error", "" + e.getMessage());
+            //return true;
+        }
+       /* else if (id = R.id.add_user){
+
+            try {
+
+                new newUserAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts/new");
+
+            } catch (Exception e) {
+                Log.e("error", "" + e.getMessage());
+                //return true;
+            }
+        }*/
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+
+            case CREATE_CONTACT_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    User newUser = data.getExtras().getParcelable("new_contact");
+                    User.users.add(newUser);
+                    Collections.sort(User.users);
+                    ((ListView) findViewById(R.id.contactList)).invalidateViews();
+                }
+                break;
+        }
+    }
+
+    private class ContactListAdapter extends ArrayAdapter<User> {
 
         public ContactListAdapter(Context context, ArrayList<User> users) {
             super(context, R.layout.item_user, users);
@@ -111,61 +167,13 @@ public class MainActivity extends ActionBarActivity  {
             // Return the completed view to render on screen
             return convertView;
         }
-    }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        //
-        if (id == R.id.action_sync_online) try {
-
-            new LoginAsyncTask().execute("http://mccgroup24.ddns.net:8080//users/sign_in");
-            new HttpAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts");
-
-        } catch (Exception e) {
-            Log.e("error", "" + e.getMessage());
-            //return true;
+        // View lookup cache
+        private class ViewHolder {
+            TextView name;
+            TextView surname;
         }
-       /* else if (id = R.id.add_user){
-
-            try {
-
-                new newUserAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts/new");
-
-            } catch (Exception e) {
-                Log.e("error", "" + e.getMessage());
-                //return true;
-            }
-        }*/
-        return super.onOptionsItemSelected(item);
     }
-
-
-
 
    /* private class newUserAysncTask extends  AsyncTaskString<String, Void, String >{
 
@@ -185,7 +193,6 @@ public class MainActivity extends ActionBarActivity  {
 
     }*/
 
-
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
         JSONArray temp;
@@ -198,13 +205,14 @@ public class MainActivity extends ActionBarActivity  {
                 temp = Synchronization.GETUsers(urls[0]);
 
             } catch
-                    (Exception e){
+                    (Exception e) {
                 Log.e("app", e.getMessage());
             }
 
 
             return Synchronization.GETUsers(urls[0]).toString();
         }
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
@@ -214,13 +222,13 @@ public class MainActivity extends ActionBarActivity  {
         }
     }
 
-
     private class LoginAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
 
             return Synchronization.POST(urls[0]);
         }
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
@@ -228,9 +236,6 @@ public class MainActivity extends ActionBarActivity  {
 
         }
     }
-
-
-
 
 
 }

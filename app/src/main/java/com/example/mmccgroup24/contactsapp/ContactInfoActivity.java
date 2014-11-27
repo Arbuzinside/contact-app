@@ -2,11 +2,11 @@ package com.example.mmccgroup24.contactsapp;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.mmccgroup24.contactsapp.models.User;
 
 
 public class ContactInfoActivity extends ActionBarActivity {
@@ -15,22 +15,16 @@ public class ContactInfoActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        String name = extras.getString("USER_NAME");
-        String surname = extras.getString("USER_SURNAME");
-        String address = extras.getString("USER_ADDRESS");
-        String email = extras.getString("USER_EMAIL");
-        String phone = extras.getString("USER_PHONE");
-        String birthday = extras.getString("USER_BIRTH");
-        String notes = extras.getString("USER_NOTES");
+        User contact = extras.getParcelable("contact");
 
         setContentView(R.layout.activity_contact_info);
-        ((TextView) findViewById(R.id.user_name)).setText(name);
-        ((TextView) findViewById(R.id.user_surname)).setText(surname);
-        ((TextView) findViewById(R.id.user_address)).setText(address);
-        ((TextView) findViewById(R.id.user_mail)).setText(email);
-        ((TextView) findViewById(R.id.user_phone)).setText(phone);
-        ((TextView) findViewById(R.id.user_birth)).setText(birthday);
-        ((TextView) findViewById(R.id.user_notes)).setText(notes);
+        ((TextView) findViewById(R.id.user_name)).setText(contact.name);
+        ((TextView) findViewById(R.id.user_surname)).setText(contact.surname);
+        ((TextView) findViewById(R.id.user_address)).setText(contact.address);
+        ((TextView) findViewById(R.id.user_mail)).setText(contact.email);
+        ((TextView) findViewById(R.id.user_phone)).setText(contact.phone);
+        ((TextView) findViewById(R.id.user_birth)).setText(contact.birthday);
+        ((TextView) findViewById(R.id.user_birth)).setText(contact.notes);
         //Then render the layout
 
     }
@@ -51,7 +45,7 @@ public class ContactInfoActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_save_local) {
             return true;
         }
 

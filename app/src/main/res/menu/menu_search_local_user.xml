@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.mmccgroup24.contactsapp.ContactInfoActivity">
-    <item android:id="@+id/action_save_local" android:title="@string/action_save_local"
+    tools:context="com.example.mmccgroup24.contactsapp.SearchLocalUserActivity">
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
