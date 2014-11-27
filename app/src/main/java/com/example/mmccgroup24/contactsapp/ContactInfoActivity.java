@@ -57,4 +57,10 @@ public class ContactInfoActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public boolean syncGlobally(){
+
+
+        return true;
+    }
 }

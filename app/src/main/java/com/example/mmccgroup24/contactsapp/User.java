@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class User {
     public String name, surname, address, email, phone, birthday, notes;
+    public static ArrayList<User> users = new ArrayList<>();
 
     // Constructor to convert JSON object into a Java class instance
     public User(JSONObject object) {
@@ -40,7 +41,6 @@ public class User {
     // Factory method to convert an array of JSON objects into a list of objects
     // User.fromJson(jsonArray);
     public static ArrayList<User> fromJson(JSONArray jsonObjects) {
-        ArrayList<User> users = new ArrayList<>();
         for (int i = 0; i < jsonObjects.length(); i++) {
             try {
                 users.add(new User(jsonObjects.getJSONObject(i)));
@@ -50,4 +50,5 @@ public class User {
         }
         return users;
     }
+
 }
