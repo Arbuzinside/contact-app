@@ -18,6 +18,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
@@ -79,6 +80,44 @@ public class Synchronization extends ActionBarActivity {
     public static CookieStore cookieStore = new BasicCookieStore();
     public static HttpClient httpclient = new DefaultHttpClient();
 
+
+
+ /*   public static String Delete(String url, JSONObject user)
+    {
+        String responseString = null;
+        try {
+            // Add your data
+
+            HttpDelete delete = new HttpDelete();
+            StringEntity se = new StringEntity(user.toString());
+            delete.setURI(URI.create(url +"/" + id));
+            delete.setHeader("Accept", "application/json");
+            delete.setHeader("Content-type", "application/json");
+            HttpContext localContext = new BasicHttpContext();
+            // Bind custom cookie store to the local context
+            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+
+
+
+
+            HttpResponse response = httpclient.execute(delete, localContext);
+            HttpEntity entity = response.getEntity();
+            responseString = EntityUtils.toString(entity, "UTF-8");
+
+
+
+        } catch (ClientProtocolException e) {
+            Log.e("error", "" + e.getMessage());
+        } catch (IOException e) {
+            Log.e("error", "" + e.getMessage());
+        }
+
+        return responseString;
+
+
+
+    }*/
 
 
     public static String POST(String url){
@@ -157,7 +196,47 @@ public class Synchronization extends ActionBarActivity {
         return result;
     }
 
+    public static String newUser(String url, JSONObject user)
+    {
 
+        String responseString = null;
+        try {
+            // Add your data
+
+            HttpPost httppost = new HttpPost();
+            StringEntity se = new StringEntity(user.toString());
+            httppost.setURI(URI.create(url));
+            httppost.setEntity(se);
+            httppost.setHeader("Accept", "application/json");
+            httppost.setHeader("Content-type", "application/json");
+
+            HttpContext localContext = new BasicHttpContext();
+            // Bind custom cookie store to the local context
+            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+
+
+
+
+            HttpResponse response = httpclient.execute(httppost, localContext);
+            HttpEntity entity = response.getEntity();
+            responseString = EntityUtils.toString(entity, "UTF-8");
+
+
+
+        } catch (ClientProtocolException e) {
+            Log.e("error", "" + e.getMessage());
+        } catch (IOException e) {
+            Log.e("error", "" + e.getMessage());
+        }
+
+        return responseString;
+
+
+
+
+
+    }
 
 
 

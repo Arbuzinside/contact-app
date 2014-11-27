@@ -1,10 +1,8 @@
 package com.example.mmccgroup24.contactsapp;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
@@ -17,40 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import android.widget.Toast;
-
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity  {
@@ -67,8 +37,6 @@ public class MainActivity extends ActionBarActivity  {
         setContentView(R.layout.activity_main);
 
         //Create JSONObject (TODO--> Add here the code to fetch from the server instead of this!!!!)
-
-      //  if(sync.isConnected())
 
         if(Synchronization.isInternetAvailable(MainActivity.this)) {
             Toast.makeText(getBaseContext(), "Connected!", Toast.LENGTH_LONG).show();
@@ -172,31 +140,50 @@ public class MainActivity extends ActionBarActivity  {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sync_online) {
+        //
+        if (id == R.id.action_sync_online) try {
 
+            new LoginAsyncTask().execute("http://mccgroup24.ddns.net:8080//users/sign_in");
+            new HttpAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts");
+
+        } catch (Exception e) {
+            Log.e("error", "" + e.getMessage());
+            //return true;
+        }
+       /* else if (id = R.id.add_user){
 
             try {
 
-                new LoginAsyncTask().execute("http://mccgroup24.ddns.net:8080//users/sign_in");
-
-                new HttpAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts");
-
-
+                new newUserAsyncTask().execute("http://mccgroup24.ddns.net:8080/contacts/new");
 
             } catch (Exception e) {
                 Log.e("error", "" + e.getMessage());
                 //return true;
             }
-
-            //
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 
 
 
 
+   /* private class newUserAysncTask extends  AsyncTaskString<String, Void, String >{
 
+
+        @Override
+        protected String doInBackground(String... urls) {
+
+            return Synchronization.newUser(urls[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+
+        }
+
+
+    }*/
 
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
