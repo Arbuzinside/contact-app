@@ -1,7 +1,9 @@
 package com.example.mmccgroup24.contactsapp;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -11,11 +13,13 @@ import com.example.mmccgroup24.contactsapp.models.User;
 
 public class ContactInfoActivity extends ActionBarActivity {
 
+    private User contact;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        User contact = extras.getParcelable("contact");
+        contact = extras.getParcelable("contact");
 
         setContentView(R.layout.activity_contact_info);
         ((TextView) findViewById(R.id.user_name)).setText(contact.name);
@@ -46,6 +50,22 @@ public class ContactInfoActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save_local) {
+            // Creates a new Intent to insert a contact
+            Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION);
+            // Sets the MIME type to match the Contacts Provider
+            intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+            // Inserts name of the contact
+            intent.putExtra(ContactsContract.Intents.Insert.NAME, contact.name);
+            // Inserts address
+            intent.putExtra(ContactsContract.Intents.Insert.POSTAL, contact.address);
+            // Inserts an email address as work's mail address
+            intent.putExtra(ContactsContract.Intents.Insert.EMAIL,contact.email);
+            intent.putExtra(ContactsContract.Intents.Insert.EMAIL_TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK);
+            // Inserts phone number as work's phone number
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE, contact.phone);
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_WORK);
+            // Send the intent
+            startActivity(intent);
             return true;
         }
 
