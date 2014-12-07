@@ -42,9 +42,20 @@ public class SearchLocalUserActivity extends ActionBarActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String phone = "";
+                String phone ="", given ="" , family = "", email ="";
 
-                // Using the contact ID now we will get contact phone number
+
+                //GET the names
+                String whereName = ContactsContract.Data.MIMETYPE + " = ? AND " + ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
+                String[] whereNameParams = new String[] { ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,String.valueOf(id) };
+                Cursor nameCur = getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+                while (nameCur.moveToNext()) {
+                    given = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+                    family = nameCur.getString(nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+                }
+                nameCur.close();
+
+                // GET the Phone number
                 Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                         new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
 
@@ -60,9 +71,19 @@ public class SearchLocalUserActivity extends ActionBarActivity {
                 }
                 cursorPhone.close();
 
-                Log.d("INFO:", "Contact Phone Number: " + phone);
+                //GET the email
+                Cursor emailCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[] {String.valueOf(id) }, null);
 
-                User user = new User("", "", "", "", phone, "", "");
+                while (emailCursor.moveToNext())
+                {
+                    email = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                }
+
+                emailCursor.close();
+
+                User user = new User(given, family, "", email, phone, "", "");
 
                 Intent intent = new Intent(parent.getContext(), CreateContactActivity.class);
                 intent.putExtra("contact", user);

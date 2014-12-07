@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Erik on 25/11/2014.
@@ -73,6 +74,7 @@ public class User implements Parcelable, Comparable<User> {
                 e.printStackTrace();
             }
         }
+        Collections.sort(users);
         return users;
     }
 

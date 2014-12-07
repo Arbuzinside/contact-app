@@ -46,16 +46,6 @@ public class MainActivity extends ActionBarActivity {
         if (Synchronization.isInternetAvailable(MainActivity.this)) {
             Toast.makeText(getBaseContext(), "Connected!", Toast.LENGTH_LONG).show();
         }
-        String input = getString(R.string.JSONTest);
-        JSONArray jObject = null;
-        try {
-            jObject = new JSONArray(input);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // Construct the data source from a JSONArray
-        User.users = User.fromJson(jObject);
         // Create the adapter to convert the array to views
         adapter = new ContactListAdapter(this, User.users);
         // Attach the adapter to a ListView
